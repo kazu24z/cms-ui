@@ -1,38 +1,78 @@
-# sv
+# CMS UI
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+CMS API の管理画面
 
-## Creating a project
+## 技術スタック
 
-If you're seeing this, you've probably already done this step. Congrats!
+- SvelteKit
+- TypeScript
 
-```sh
-# create a new project in the current directory
-npx sv create
+## 機能
 
-# create a new project in my-app
-npx sv create my-app
+### 記事管理
+
+- 記事一覧
+- 記事作成（Markdown エディタ + リアルタイムプレビュー）
+- 記事編集
+- 記事削除
+- 記事公開/下書き切り替え
+
+### カテゴリ管理
+
+- カテゴリ一覧
+- カテゴリ作成/編集/削除
+
+### タグ管理
+
+- タグ一覧
+- タグ作成/編集/削除
+
+### エクスポート
+
+- エクスポート実行ボタン
+- 出力先ディレクトリ指定
+
+## ページ構成
+
+| パス                 | 説明                         |
+| -------------------- | ---------------------------- |
+| `/`                  | ダッシュボード（最近の記事） |
+| `/articles`          | 記事一覧                     |
+| `/articles/new`      | 記事作成                     |
+| `/articles/:id/edit` | 記事編集                     |
+| `/categories`        | カテゴリ管理                 |
+| `/tags`              | タグ管理                     |
+| `/settings`          | 設定（エクスポート先）       |
+
+## 画面設計
+
+### ダッシュボード（/）
+
+- 最近の記事一覧（5 件程度）
+- 各ページへのクイックリンク
+
+### 記事エディタ
+
+```
+┌──────────────────┬──────────────────────┐
+│ Markdown 入力    │ プレビュー           │
+│                  │                      │
+└──────────────────┴──────────────────────┘
 ```
 
-## Developing
+### デザイン方針
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- シンプル
+- モノトーン基調
 
-```sh
+## API 接続
+
+```
+CMS UI (localhost:5173) → CMS API (localhost:8080)
+```
+
+## 起動方法
+
+```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
