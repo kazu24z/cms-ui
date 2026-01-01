@@ -3,6 +3,7 @@
 	import { exportSite, settings } from '$lib/api';
 
 	let exportDir = $state('');
+	let siteTitle = $state('');
 	let exporting = $state(false);
 	let saving = $state(false);
 	let message = $state('');
@@ -12,6 +13,7 @@
 		try {
 			const s = await settings.get();
 			exportDir = s.export_dir;
+			siteTitle = s.site_title;
 		} catch (e) {
 			message = `設定の読み込みに失敗: ${e instanceof Error ? e.message : 'Failed'}`;
 		} finally {
@@ -24,7 +26,7 @@
 		saving = true;
 		message = '';
 		try {
-			await settings.update({ export_dir: exportDir });
+			await settings.update({ export_dir: exportDir, site_title: siteTitle });
 			message = '設定を保存しました';
 		} catch (e) {
 			message = `エラー: ${e instanceof Error ? e.message : 'Failed'}`;
@@ -55,6 +57,13 @@
 	<div class="card">
 		<h2>エクスポート</h2>
 		<p class="description">公開済みの記事を静的 HTML として出力します。</p>
+
+		<div class="form-row">
+			<label>
+				サイトタイトル
+				<input type="text" bind:value={siteTitle} placeholder="Blog" />
+			</label>
+		</div>
 
 		<div class="form-row">
 			<label>

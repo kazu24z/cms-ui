@@ -112,6 +112,7 @@ export const exportSite = {
 // Settings
 export interface Settings {
 	export_dir: string;
+	site_title: string;
 }
 
 export const settings = {
