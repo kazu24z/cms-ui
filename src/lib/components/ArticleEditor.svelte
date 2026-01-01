@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { marked } from 'marked';
-	import type { Category, Tag } from '$lib/api';
+	import { images, API_BASE_URL, type Category, type Tag } from '$lib/api';
 
 	interface Props {
 		title: string;
@@ -42,7 +42,58 @@
 	}
 
 	function parseMarkdown(md: string): string {
-		return marked(md) as string;
+		return marked(md, { breaks: true }) as string;
+	}
+
+	let textareaEl: HTMLTextAreaElement;
+	let uploading = $state(false);
+
+	async function handleDrop(e: DragEvent) {
+		e.preventDefault();
+		const files = e.dataTransfer?.files;
+		if (!files) return;
+		await uploadImages(files);
+	}
+
+	async function handlePaste(e: ClipboardEvent) {
+		const files = e.clipboardData?.files;
+		if (!files || files.length === 0) return;
+		e.preventDefault();
+		await uploadImages(files);
+	}
+
+	async function uploadImages(files: FileList) {
+		for (const file of files) {
+			if (!file.type.startsWith('image/')) continue;
+			uploading = true;
+			try {
+				const result = await images.upload(file);
+				insertMarkdownImage(result.url, file.name);
+			} catch (err) {
+				alert(err instanceof Error ? err.message : 'Upload failed');
+			} finally {
+				uploading = false;
+			}
+		}
+	}
+
+	function insertMarkdownImage(url: string, alt: string) {
+		const textarea = textareaEl;
+		const start = textarea.selectionStart;
+		const end = textarea.selectionEnd;
+		// フルURLにしてプレビューでも表示できるようにする
+		const fullUrl = url.startsWith('/') ? API_BASE_URL.replace('/api', '') + url : url;
+		const imgTag = `<img src="${fullUrl}" width="300" alt="${alt}">`;
+		content = content.slice(0, start) + imgTag + content.slice(end);
+		// カーソル位置を調整
+		setTimeout(() => {
+			textarea.selectionStart = textarea.selectionEnd = start + imgTag.length;
+			textarea.focus();
+		}, 0);
+	}
+
+	function handleDragOver(e: DragEvent) {
+		e.preventDefault();
 	}
 </script>
 
@@ -94,8 +145,15 @@
 
 	<div class="editor-container">
 		<div class="editor-pane">
-			<label>本文（Markdown）</label>
-			<textarea bind:value={content} rows="20"></textarea>
+			<label>本文（Markdown） {#if uploading}<span class="uploading">アップロード中...</span>{/if}</label>
+			<textarea
+				bind:this={textareaEl}
+				bind:value={content}
+				rows="20"
+				ondrop={handleDrop}
+				ondragover={handleDragOver}
+				onpaste={handlePaste}
+			></textarea>
 		</div>
 		<div class="preview-pane">
 			<label>プレビュー</label>
@@ -230,6 +288,12 @@
 		border-radius: 4px;
 		text-decoration: none;
 		font-size: 0.9rem;
+	}
+
+	.uploading {
+		color: var(--accent);
+		font-size: 0.8rem;
+		margin-left: 0.5rem;
 	}
 </style>
 

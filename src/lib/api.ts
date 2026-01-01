@@ -1,4 +1,5 @@
 const API_BASE = 'http://localhost:8080/api';
+export const API_BASE_URL = API_BASE;
 
 // Types
 export interface Category {
@@ -106,4 +107,21 @@ export const exportSite = {
 			method: 'POST',
 			body: JSON.stringify({ export_dir: exportDir })
 		})
+};
+
+// Images
+export const images = {
+	upload: async (file: File): Promise<{ filename: string; url: string }> => {
+		const formData = new FormData();
+		formData.append('image', file);
+		const res = await fetch(`${API_BASE}/images`, {
+			method: 'POST',
+			body: formData
+		});
+		if (!res.ok) {
+			const error = await res.json().catch(() => ({ error: 'Upload failed' }));
+			throw new Error(error.error || 'Upload failed');
+		}
+		return res.json();
+	}
 };
