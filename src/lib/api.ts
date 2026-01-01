@@ -102,11 +102,22 @@ export const tags = {
 
 // Export
 export const exportSite = {
-	run: (exportDir: string) =>
+	run: () =>
 		request<{ message: string; export_dir: string }>('/export', {
 			method: 'POST',
-			body: JSON.stringify({ export_dir: exportDir })
+			body: JSON.stringify({})
 		})
+};
+
+// Settings
+export interface Settings {
+	export_dir: string;
+}
+
+export const settings = {
+	get: () => request<Settings>('/settings'),
+	update: (data: Settings) =>
+		request<Settings>('/settings', { method: 'POST', body: JSON.stringify(data) })
 };
 
 // Images
