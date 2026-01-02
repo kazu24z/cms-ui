@@ -14,6 +14,7 @@
 			<li><a href="/articles">記事</a></li>
 			<li><a href="/categories">カテゴリ</a></li>
 			<li><a href="/tags">タグ</a></li>
+			<li><a href="/templates">テンプレート</a></li>
 			<li><a href="/settings">設定</a></li>
 		</ul>
 	</nav>

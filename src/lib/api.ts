@@ -137,3 +137,44 @@ export const images = {
 		return res.json();
 	}
 };
+
+// Templates
+export interface Template {
+	id: number;
+	name: string;
+	content: string;
+	created_at: string;
+	updated_at: string;
+}
+
+export const templates = {
+	getAll: () => request<Template[]>('/templates'),
+	getByName: (name: string) => request<Template>(`/templates/${name}`),
+	upload: async (name: string, file: File): Promise<Template> => {
+		const formData = new FormData();
+		formData.append('file', file);
+		const res = await fetch(`${API_BASE}/templates/${name}/upload`, {
+			method: 'POST',
+			body: formData
+		});
+		if (!res.ok) {
+			const error = await res.json().catch(() => ({ error: 'Upload failed' }));
+			throw new Error(error.error || 'Upload failed');
+		}
+		return res.json();
+	},
+	import: async (file: File): Promise<{ message: string; imported: string[]; errors: string[] }> => {
+		const formData = new FormData();
+		formData.append('file', file);
+		const res = await fetch(`${API_BASE}/templates/import`, {
+			method: 'POST',
+			body: formData
+		});
+		if (!res.ok) {
+			const error = await res.json().catch(() => ({ error: 'Import failed' }));
+			throw new Error(error.error || 'Import failed');
+		}
+		return res.json();
+	},
+	reset: () => request<{ message: string }>('/templates/reset', { method: 'POST' })
+};
