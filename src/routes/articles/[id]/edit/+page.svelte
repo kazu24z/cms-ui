@@ -63,9 +63,28 @@
 			alert(e instanceof Error ? e.message : 'Failed to update');
 		}
 	}
+
+	async function handleToggleStatus() {
+		if (!article) return;
+		try {
+			article = await articles.toggleStatus(article.id);
+		} catch (e) {
+			alert(e instanceof Error ? e.message : 'Status toggle failed');
+		}
+	}
 </script>
 
-<h1>記事編集</h1>
+<div class="header">
+	<h1>記事編集</h1>
+	{#if article}
+		<button
+			class={article.status === 'draft' ? 'btn-success' : 'btn-secondary'}
+			onclick={handleToggleStatus}
+		>
+			{article.status === 'draft' ? '公開' : '下書きに戻す'}
+		</button>
+	{/if}
+</div>
 
 {#if loading}
 	<p>読み込み中...</p>
@@ -86,4 +105,35 @@
 		/>
 	</div>
 {/if}
+
+<style>
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.header h1 {
+		margin: 0;
+	}
+
+	.btn-success {
+		background-color: var(--success);
+		color: white;
+		border: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+
+	.btn-secondary {
+		background-color: var(--secondary);
+		color: white;
+		border: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		cursor: pointer;
+	}
+</style>
 

@@ -31,12 +31,12 @@
 		}
 	}
 
-	async function handlePublish(id: number) {
+	async function handleToggleStatus(id: number) {
 		try {
-			await articles.publish(id);
+			await articles.toggleStatus(id);
 			await loadArticles();
 		} catch (e) {
-			alert(e instanceof Error ? e.message : 'Publish failed');
+			alert(e instanceof Error ? e.message : 'Status toggle failed');
 		}
 	}
 </script>
@@ -72,11 +72,12 @@
 						</td>
 						<td>{new Date(article.updated_at).toLocaleDateString('ja-JP')}</td>
 						<td class="actions">
-							{#if article.status === 'draft'}
-								<button class="btn-success" onclick={() => handlePublish(article.id)}>
-									公開
-								</button>
-							{/if}
+							<button
+								class={article.status === 'draft' ? 'btn-success' : 'btn-secondary'}
+								onclick={() => handleToggleStatus(article.id)}
+							>
+								{article.status === 'draft' ? '公開' : '下書きに戻す'}
+							</button>
 							<a href="/articles/{article.id}/edit" class="btn btn-secondary">編集</a>
 							<button class="btn-danger" onclick={() => handleDelete(article.id)}>削除</button>
 						</td>

@@ -76,7 +76,7 @@ export const articles = {
 			tag_ids?: number[];
 		}
 	) => request<Article>(`/articles/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-	publish: (id: number) => request<Article>(`/articles/${id}/publish`, { method: 'POST' }),
+	toggleStatus: (id: number) => request<Article>(`/articles/${id}/toggle-status`, { method: 'POST' }),
 	delete: (id: number) => request<void>(`/articles/${id}`, { method: 'DELETE' })
 };
 
